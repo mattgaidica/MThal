@@ -60,7 +60,7 @@ function makeEEGPlot(dataDir,saveDir,tetrodeMap,plateVacancyMap,dataStep,chunkLe
         ylabel('ch+uV')
         legend('100ms@100uV')
 
-        filename = strcat('samples',num2str(dataStart),'-',num2str(dataStart+chunkLength));
+        filename = strcat('samples',num2str(dataStart),'-',num2str(dataEnd));
         tightfig;
         title(filename)
         %save, close
