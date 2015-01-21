@@ -1,7 +1,7 @@
 function locs=absPeakDetection(data)
 
     figure;
-    plot(data(1:10000));
+    plot(data);
     [x,y] = ginput;
     close;
 
@@ -16,7 +16,7 @@ function locs=absPeakDetection(data)
     figure;
     plot(data);
     hold on;
-    
+    %mark spike locations in time
     for i=1:length(locs);
         plot(locs(i),data(locs(i)),'o','color','r');
     end
