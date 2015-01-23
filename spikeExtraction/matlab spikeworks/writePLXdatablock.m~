@@ -1,0 +1,80 @@
+function writePLXdatablock( fid, spikes, channel, ts )
+%
+% usage: 
+%
+% Write PLX datablocks corresponding to the data
+% found in the arrays spikes, ts, and channel
+% We assume these are spikes on the given channel, 
+% of the length of the waveforms given in spikes
+%
+% INPUTS:
+%	fid - pointer to an open PLX file with headers written in (using writePLXfileheader and  writePLXchanheader)
+%	spikes     - numspikes by len(spike) by 4 array of spikes on a tetrode (the actual waveforms?)
+%	channel    - the channel number that the spikes are found on
+%	ts         - time-stamps corresponding the spikes (int16's in tick counts, I think - DL 20120515)
+
+
+% Only the time-stamps, spikes & channel number change when writing all spikes and 
+% time-stamps out from a particular channel, so we can make 
+% slices of byte-bread to sandwich the time-stamp that stay constant
+
+topslice = pack('<hH', 1, 0) # Type (1 = spike) and UpperByte of Timestamp = 0
+bottomslice = pack('<3h', 0, 1, spikes.shape[1]) # Unit (0=unsorted), numwaveforms = 1, numpoints per waveform
+
+numSpikes = size(spikes, 1);
+numWires  = size(spikes, 2);    % check that the dimensions are correct for my data structures
+for iSpike = 1 : numSpikes
+    for iWire = 1 : numWires
+        fwrite(fid, 1,'int8', 0, 'l');    % not sure why these constants are written, but it worked in Alex's python code
+        fwrite(fid, 0,'uint8', 0, 'l');
+        fwrite(fid, ts(iSpike),'uint32', 0, 'l');    % write the timestamp
+        fwrite(fid, iWire, 'int8', 0, 'l');
+        fwrite(fid, [0 1 size(spikes, 1)], 'int8', 0, 'l');
+        fwrite(fid, squeeze(spikes(iSpike, :, iWire)), 'int32', 0, 'l');
+
+
+
+def writePLXdatablock(filehandle, spikes, ts, channel, endian=True):
+	"""
+	Write PLX datablocks corresponding to the data
+	found in the arrays spikes, ts, and channel
+	We assume these are spikes on the given channel, 
+	of the length of the waveforms given in spikes
+	
+	filehandle - pointer to an open PLX file with headers written in
+	             (using writePLXfileheader and  writePLXchanheader)
+	spikes     - numspikes by len(spike) by 4 array of spikes on a tetrode
+	channel    - the channel number that the spikes are found on
+	ts         - time-stamps corresponding the spikes
+	"""
+	
+	from struct import pack
+
+	spikes = N.int16(spikes) # Make the spikes int16's for writing out...
+
+	# if endian:
+	# 	spikes.byteswap(True)
+	#  		# Do an in-place byte-swap to a different
+	# 	# endianness if required
+
+	# Clarification: We don't have to byteswap the ts array because we use
+	# the pack() function, which takes care of it.
+	# The pack function, however, does not work well with anything but single values at a time,
+	# So we use the .tofile property of NumPy arrays to spit out already byte-swapped and typed spikes
+
+
+	# Only the time-stamps, spikes & channel number change when writing all spikes and 
+	# time-stamps out from a particular channel, so we can make 
+	# slices of byte-bread to sandwich the time-stamp that stay constant
+
+	topslice = pack('<hH', 1, 0) # Type (1 = spike) and UpperByte of Timestamp = 0
+	bottomslice = pack('<3h', 0, 1, spikes.shape[1]) # Unit (0=unsorted), numwaveforms = 1, numpoints per waveform
+
+	for i in range(spikes.shape[0]): # For every spike...
+		for j in range(spikes.shape[2]): # Iterate over all wires
+			filehandle.write(topslice)
+			filehandle.write(pack('<L', int(ts[i]))) # Write time-stamp
+			filehandle.write(pack('<h', j+1)) # Write the channel
+			filehandle.write(bottomslice)
+			spikes[i,:,j].tofile(filehandle) # This part is iffy, I'm hoping all information is preserved...
+	pass
