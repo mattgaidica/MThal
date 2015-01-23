@@ -35,19 +35,18 @@ numWires  = size(spikes, 3);    % check that the dimensions are correct for my d
 %     end
 % end
 
-% MERGED FROM SAMPLE
+MERGED FROM SAMPLE
 for iSpike = 1 : numSpikes
-    for iWire = 1 : numWires
+    for iWire = 1 : 1%numWires
         fwrite(fid, 1, 'integer*2');           % type: 1 = spike
         fwrite(fid, 0, 'integer*2');           % upper byte of 5-byte timestamp
         fwrite(fid, ts(iSpike), 'integer*4');    % lower 4 bytes, write the timestamp
         fwrite(fid, iWire, 'integer*2'); % ch number
         
-        % Why do these two lines appears in the Plexon SDK but don't work for us?
+% Why do these two lines appears in the Plexon SDK but don't work for us?
 %         fwrite(fid, 0, 'integer*2');  % unit no. (0 = unsorted)
 %         fwrite(fid, 1, 'integer*2');           % no. of waveforms = 1
         fwrite(fid, [0 1 size(spikes, 2)],'integer*2'); % no. of samples per waveform
-        
         fwrite(fid, squeeze(spikes(iSpike, :, iWire)),'integer*2'); %waveform data
     end
 end

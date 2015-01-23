@@ -206,7 +206,7 @@ for iCh = 1 : length(chList)
     chInfo.thresh    = int32(thresholds(iCh));
     chInfo.numUnits  = 0;    % no sorted units
     chInfo.sortWidth = final_waveLength;
-    chInfo.comment   = 'created by extract_PLXtimestamps_sincInterp_TDT_20141208.m';
+    chInfo.comment   = 'created by extract_PLXtimestamps_sincInterp_TDT.m';
 
     writePLXChanHeader( PLXid, chInfo );
 end
@@ -220,9 +220,10 @@ count3=0;
 
 %             MakeQTMovie('start',qtname)
 %             MakeQTMovie('quality', 0.1);
-for iBlock = 1 : 1%numBlocks
+for iBlock = 1:numBlocks
     count3=count3+1;
-    disp(['Finding timestamps and extracting waveforms for block ' num2str(iBlock) ' of ' num2str(numBlocks)]);
+    disp(iBlock)
+    %disp(['Finding timestamps and extracting waveforms for block ' num2str(iBlock) ' of ' num2str(numBlocks)]);
     
     rawData_curSamp   = (iBlock - 1) * blockSize;
     upsampled_curSamp = rawData_curSamp * r_upsample;
@@ -301,8 +302,7 @@ for iBlock = 1 : 1%numBlocks
     
     ts = ts + upsampled_curSamp;
     
-    writePLXdatablock( PLXid, waveforms, ts );
-    
+    writePLXdatablock( PLXid, waveforms, ts );    
 end
 
 fclose(PLXid);
