@@ -1,5 +1,6 @@
 %tetrodeMap is a vector of channels in tetrode order, just load these from
 %the .mat files I saved in AcuteAnalysis
+%tetrodeMap=chMat_128(:)';
 
 % %plateVacancyMap is a boolean matrix: col1=ch,col2=0/1 electrode
 % %present,col3=0/1 gold plated
