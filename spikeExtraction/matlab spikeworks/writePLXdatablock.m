@@ -37,7 +37,7 @@ numWires  = size(spikes, 3);    % check that the dimensions are correct for my d
 
 % MERGED FROM SAMPLE
 for iSpike = 1 : numSpikes
-    for iWire = 1 : 1%numWires
+    for iWire = 1 : numWires
         fwrite(fid, 1, 'integer*2');           % type: 1 = spike
         fwrite(fid, 0, 'integer*2');           % upper byte of 5-byte timestamp
         fwrite(fid, ts(iSpike), 'integer*4');    % lower 4 bytes, write the timestamp

@@ -3,8 +3,8 @@
 
 % Open a plx file
 % this will bring up the file-open dialog
-StartingFileName = '';
-%StartingFileName = 'c:\plexondata\NSSample.plx';
+StartingFileName = '\\172.20.138.142\RecordingsLeventhal2\ChoiceTask\R0040\R0040-processed\R0040_20150119h\R0040_20150119h_T09_WL24_PL08_DT16.plx';
+StartingFileName = 'C:\Users\admin\Documents\MATLAB\MattGaidica\MThal\utilities\thirdparty\PLX & DDT Offline Files SDK\SampleData\test.plx';
 %StartingFileName = 'c:\plexondata\au101602a.plx';
 [OpenedFileName, Version, Freq, Comment, Trodalness, NPW, PreThresh, SpikePeakV, SpikeADResBits, SlowPeakV, SlowADResBits, Duration, DateTime] = plx_information(StartingFileName);
 

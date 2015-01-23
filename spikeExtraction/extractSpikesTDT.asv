@@ -33,7 +33,7 @@ function extractSpikesTDT(sessionName, varargin)
 
 
 %%%%%%%%%%%%%%channel map is pulled out from a database channelMap table.%%%%%%%%%%%%%%
-javaaddpath('C:\Program Files\MATLAB\R2013a\java\jarext\mysql-connector-java-5.0.8\mysql-connector-java-5.0.8-bin.jar')
+% javaaddpath('C:\Program Files\MATLAB\R2013a\java\jarext\mysql-connector-java-5.0.8\mysql-connector-java-5.0.8-bin.jar')
 % hostIP = '172.20.138.142';
 % user = 'dleventh';
 % password = 'amygdala_probe';
@@ -176,7 +176,7 @@ for iTet = 1 : numValidTets
     
     disp(['calculating single wire standard deviations for tetrode ' tetrodeList{iTet}]);
     
-    tetWireStd(iTet, :) = extractSigma_snle_TDT(sessionTDTpath, ...            % NOTE: As of 20141208, it's actually not the standard deviation, but the median of the snle / 0.6745 
+    tetWireStd(iTet, :) = extractSigma_snle_TDT_20141207(sessionTDTpath, ...            % NOTE: As of 20141208, it's actually not the standard deviation, but the median of the snle / 0.6745 
                           chMap.chMap(tetChannels(iTet), 2:end), ...
                           validMask, ...
                           numSigmaSegments, sigmaChunkLength, r_upsample, ...
@@ -223,7 +223,7 @@ for iTet = 1 : length(tetrodeList)
 
 	validMask(isnan(validMask)) = 0;
     
-    extract_PLXtimestamps_sincInterp_TDT(sessionTDTpath, tetrodeList{iTet}, chMap.chMap(iTet, 2:end), tet_thresholds(iTet, :), validMask, ...
+    extract_PLXtimestamps_sincInterp_TDT_20141208(sessionTDTpath, tetrodeList{iTet}, chMap.chMap(iTet, 2:end), tet_thresholds(iTet, :), validMask, ...
         'wavelength', waveLength, ...
         'peakloc', peakLoc, ...
         'snlewindow', snle_window, ...

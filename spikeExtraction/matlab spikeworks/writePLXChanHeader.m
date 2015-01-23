@@ -63,4 +63,5 @@ else
     commentToWrite = [uint8(chInfo.comment), zeros(1, numBlanks)];
 end
 fwrite(fid, commentToWrite, 'uint8', 0, 'l');	% comment we're not typically using
+%fwrite(fid, pad256(1:44), 'char');       % padding
 fwrite(fid, zeros(1, 11), 'int32', 0, 'l');	% padding to finish it off (what the heck does this mean?)
