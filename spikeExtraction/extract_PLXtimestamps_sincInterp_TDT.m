@@ -156,7 +156,7 @@ numBlocks = ceil(datalength / blockSize);
 spikeParameterString = sprintf('WL%02d_PL%02d_DT%02d', waveLength, peakLoc, deadTime);
 PLX_fn = fullfile(processedDataPath, [sessionName '_' tetName '_' spikeParameterString '.plx']);
 
-plxInfo.comment    = '';
+plxInfo.comment    = 'This is a test';
 plxInfo.ADFs       = final_Fs;           % record the upsampled Fs as the AD freq for timestamps
 plxInfo.numWires   = length(chList);
 plxInfo.numEvents  = 0;
@@ -175,17 +175,19 @@ plxInfo.second     = 0;
 plxInfo.waveFs     = final_Fs;          % record the upsampled Fs as the waveform sampling frequency
 plxInfo.dataLength = datalength * r_upsample;
 
-plxInfo.Trodalness     = length(chList); 
-plxInfo.dataTrodalness = 4; %Trodalness - 0,1 = single electrode, 2 = stereotrode, 4 = tetrode
+plxInfo.Trodalness     = length(chList); %Trodalness - 0,1 = single electrode, 2 = stereotrode, 4 = tetrode
+plxInfo.dataTrodalness = 0; %this is set to 0 in the Plexon tetrode sample file
 
 plxInfo.bitsPerSpikeSample = 16;
 plxInfo.bitsPerSlowSample  = 16;
 
-plxInfo.SpikeMaxMagnitudeMV = 2;    % +/- 1 V dynamic range on DAQ cards
-plxInfo.SlowMaxMagnitudeMV  = 2;    % +/- 1 V dynamic range on DAQ cards (probably not relevant for Berke lab systems)
-plxInfo.SpikePreAmpGain     = 10^6;        % gain before final amplification stage
+plxInfo.SpikeMaxMagnitudeMV = 5000;%2;    % +/- 1 V dynamic range on DAQ cards
+plxInfo.SlowMaxMagnitudeMV  = 5000;%2;    % +/- 1 V dynamic range on DAQ cards (probably not relevant for Berke lab systems)
 
-PLXid = fopen(PLX_fn, 'w');
+%THIS SHOWS AS 65536 in OFFLINE SORTER, whats's wrong?
+plxInfo.SpikePreAmpGain     = 1;%10^6;        % gain before final amplification stage
+
+PLXid = fopen(PLX_fn, 'w','n','UTF-8');
 writePLXheader( PLXid, plxInfo );
 
 % subjectName = strrep(header.name(1:end-9), '-', '');   % get rid of any hyphens in the subject name
@@ -206,12 +208,10 @@ for iCh = 1 : length(chList)
     chInfo.thresh    = int32(thresholds(iCh));
     chInfo.numUnits  = 0;    % no sorted units
     chInfo.sortWidth = final_waveLength;
-    chInfo.comment   = 'created by extract_PLXtimestamps_sincInterp_TDT.m';
+    chInfo.comment   = '';
 
     writePLXChanHeader( PLXid, chInfo );
 end
-
- % WORKING HERE.........................................................
 
 count3=0;
 % startSample = 1;
@@ -220,7 +220,7 @@ count3=0;
 
 %             MakeQTMovie('start',qtname)
 %             MakeQTMovie('quality', 0.1);
-for iBlock = 1:numBlocks
+for iBlock = 1%:numBlocks
     count3=count3+1;
     disp(iBlock)
     %disp(['Finding timestamps and extracting waveforms for block ' num2str(iBlock) ' of ' num2str(numBlocks)]);
@@ -297,12 +297,12 @@ for iBlock = 1:numBlocks
     % sampling rate to get real time
     
     if isempty(ts); continue; end
-    
+
     waveforms = extractWaveforms(fdata, block_ts, final_peakLoc, final_waveLength);
     
     ts = ts + upsampled_curSamp;
     
-    writePLXdatablock( PLXid, waveforms, ts );    
+    writePLXdatablock( PLXid, waveforms, ts, final_Fs);    
 end
 
 fclose(PLXid);

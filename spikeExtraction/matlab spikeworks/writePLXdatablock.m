@@ -1,4 +1,4 @@
-function writePLXdatablock( fid, spikes, ts )
+function writePLXdatablock( fid, spikes, ts, final_Fs)
 %
 % usage: writePLXdatablock( fid, spikes, ts )
 %
@@ -44,9 +44,9 @@ for iSpike = 1 : numSpikes
         fwrite(fid, iWire, 'integer*2'); % ch number
         
         % Why do these two lines appears in the Plexon SDK but don't work for us?
-%         fwrite(fid, 0, 'integer*2');  % unit no. (0 = unsorted)
-%         fwrite(fid, 1, 'integer*2');           % no. of waveforms = 1
-        fwrite(fid, [0 1 size(spikes, 2)],'integer*2'); % no. of samples per waveform
+        fwrite(fid, 0, 'integer*2');  % unit no. (0 = unsorted)
+        fwrite(fid, 1, 'integer*2');  % no. of waveforms = 1
+        fwrite(fid, size(spikes,2),'integer*2'); % no. of samples per waveform
         
         fwrite(fid, squeeze(spikes(iSpike, :, iWire)),'integer*2'); %waveform data
     end

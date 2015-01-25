@@ -37,7 +37,7 @@ fwrite(fid, plxInfo.second, 'int32', 0, 'l');
 fwrite(fid, 0, 'int32', 0, 'l');                  % fast read (not sure what this is)
 fwrite(fid, plxInfo.waveFs, 'int32', 0, 'l');     % sampling rate of the waveform (may be different from ADFs)
 fwrite(fid, plxInfo.dataLength, 'double', 0, 'l'); % last timestamp in clock ticks. Length in seconds = dataLength / ADFs
-
+fwrite(plx_id, pad256(1:56), 'char');       % should make 256 bytes
 %fwrite(fid, plxInfo.next4fields, 'char*1', 0, 'l');
 fwrite(fid, plxInfo.Trodalness, 'uint8', 0, 'l'); % 1 for single wires, 2 for stereotrodes, 4 for tetrodes
 fwrite(fid, plxInfo.dataTrodalness, 'uint8', 0, 'l'); % not exactly sure how this differs from Trodalness above

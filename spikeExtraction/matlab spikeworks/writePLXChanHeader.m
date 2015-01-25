@@ -36,6 +36,7 @@ else
 %     chInfo.tetName = [chInfo.tetName, blanks(numBlanks)];
     tetToWrite = [uint8(chInfo.tetName), zeros(1, numBlanks)];
 end
+pad256(1:256) = uint8(0);
 fwrite(fid, tetToWrite, 'uint8', 0, 'l');
 
 fwrite(fid, chInfo.wireNum, 'int32', 0, 'l');
@@ -53,6 +54,7 @@ fwrite(fid, chInfo.sortWidth, 'int32', 0, 'l');	% number of points to use in tem
 fwrite(fid, zeros(1, 40), 'int16', 0, 'l');	% Pad the short Boxes[5][2][4] spot
 fwrite(fid, 0, 'int32', 0, 'l');		% Pad the int SortBeg spot (beginning of the sorting window for template sorting)
 
+%this is adding weird characters, lets just use pad256 for now
 % make sure the comment is exactly 128 characters long
 if length(chInfo.comment) > 128
     chInfo.comment = chInfo.comment(1:128);
@@ -62,6 +64,6 @@ else
 %     chInfo.comment = [chInfo.comment, blanks(numBlanks)];
     commentToWrite = [uint8(chInfo.comment), zeros(1, numBlanks)];
 end
-fwrite(fid, commentToWrite, 'uint8', 0, 'l');	% comment we're not typically using
-%fwrite(fid, pad256(1:44), 'char');       % padding
+fwrite(fid, pad256(1:128), 'char', 0, 'l');     % comment
+%fwrite(fid, commentToWrite, 'uint8', 0, 'l');	% comment we're not typically using
 fwrite(fid, zeros(1, 11), 'int32', 0, 'l');	% padding to finish it off (what the heck does this mean?)
