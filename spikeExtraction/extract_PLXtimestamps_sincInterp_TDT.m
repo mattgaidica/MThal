@@ -181,8 +181,8 @@ plxInfo.dataTrodalness = 1; %this is set to 0 in the Plexon tetrode sample file
 plxInfo.bitsPerSpikeSample = 16;
 plxInfo.bitsPerSlowSample  = 16;
 
-plxInfo.SpikeMaxMagnitudeMV = 5000;%2;    % +/- 1 V dynamic range on DAQ cards
-plxInfo.SlowMaxMagnitudeMV  = 5000;%2;    % +/- 1 V dynamic range on DAQ cards (probably not relevant for Berke lab systems)
+plxInfo.SpikeMaxMagnitudeMV = 10000;%2;    % +/- 1 V dynamic range on DAQ cards
+plxInfo.SlowMaxMagnitudeMV  = 10000;%2;    % +/- 1 V dynamic range on DAQ cards (probably not relevant for Berke lab systems)
 
 %THIS SHOWS AS 65536 in OFFLINE SORTER, whats's wrong?
 plxInfo.SpikePreAmpGain     = 1;%10^6;        % gain before final amplification stage
@@ -199,11 +199,11 @@ for iCh = 1 : length(chList)
     chInfo.tetName  = [sessionName '_' tetName];
     chInfo.wireName = sprintf('%s_W%02d', chInfo.tetName, iCh);
     
-    chInfo.wireNum   = iCh;
+    chInfo.wireNum   = iCh; %tetrode number
     chInfo.WFRate    = final_Fs;
-    chInfo.SIG       = chList(iCh);   % not sure what SIG is in plexon parlance; hopefully this just works
+    chInfo.SIG       = chList(iCh);  %channel number
     chInfo.refWire   = 0;     % not sure exactly what this is; Alex had it set to zero
-    chInfo.gain      = 1;
+    chInfo.gain      = 0;
     chInfo.filter    = 0;    % not sure what this is; Alex had it set to zero
     chInfo.thresh    = int32(thresholds(iCh));
     chInfo.numUnits  = 0;    % no sorted units
@@ -220,7 +220,7 @@ count3=0;
 
 %             MakeQTMovie('start',qtname)
 %             MakeQTMovie('quality', 0.1);
-for iBlock = 1%:numBlocks
+for iBlock = 1:numBlocks
     count3=count3+1;
     disp(iBlock)
     %disp(['Finding timestamps and extracting waveforms for block ' num2str(iBlock) ' of ' num2str(numBlocks)]);
