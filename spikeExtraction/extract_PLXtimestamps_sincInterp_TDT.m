@@ -176,7 +176,7 @@ plxInfo.waveFs     = final_Fs;          % record the upsampled Fs as the wavefor
 plxInfo.dataLength = datalength * r_upsample;
 
 plxInfo.Trodalness     = length(chList); %Trodalness - 0,1 = single electrode, 2 = stereotrode, 4 = tetrode
-plxInfo.dataTrodalness = 0; %this is set to 0 in the Plexon tetrode sample file
+plxInfo.dataTrodalness = 1; %this is set to 0 in the Plexon tetrode sample file
 
 plxInfo.bitsPerSpikeSample = 16;
 plxInfo.bitsPerSlowSample  = 16;
@@ -187,7 +187,7 @@ plxInfo.SlowMaxMagnitudeMV  = 5000;%2;    % +/- 1 V dynamic range on DAQ cards (
 %THIS SHOWS AS 65536 in OFFLINE SORTER, whats's wrong?
 plxInfo.SpikePreAmpGain     = 1;%10^6;        % gain before final amplification stage
 
-PLXid = fopen(PLX_fn, 'w','n','UTF-8');
+PLXid = fopen(PLX_fn, 'w');
 writePLXheader( PLXid, plxInfo );
 
 % subjectName = strrep(header.name(1:end-9), '-', '');   % get rid of any hyphens in the subject name
@@ -199,16 +199,16 @@ for iCh = 1 : length(chList)
     chInfo.tetName  = [sessionName '_' tetName];
     chInfo.wireName = sprintf('%s_W%02d', chInfo.tetName, iCh);
     
-    chInfo.wireNum   = chList(iCh);
+    chInfo.wireNum   = iCh;
     chInfo.WFRate    = final_Fs;
-    chInfo.SIG       = iCh;   % not sure what SIG is in plexon parlance; hopefully this just works
+    chInfo.SIG       = chList(iCh);   % not sure what SIG is in plexon parlance; hopefully this just works
     chInfo.refWire   = 0;     % not sure exactly what this is; Alex had it set to zero
     chInfo.gain      = 1;
     chInfo.filter    = 0;    % not sure what this is; Alex had it set to zero
     chInfo.thresh    = int32(thresholds(iCh));
     chInfo.numUnits  = 0;    % no sorted units
     chInfo.sortWidth = final_waveLength;
-    chInfo.comment   = '';
+    chInfo.comment   = 'created by extractSpikesTDT.m';
 
     writePLXChanHeader( PLXid, chInfo );
 end
@@ -302,7 +302,7 @@ for iBlock = 1%:numBlocks
     
     ts = ts + upsampled_curSamp;
     
-    writePLXdatablock( PLXid, waveforms, ts, final_Fs);    
+    writePLXdatablock( PLXid, waveforms, ts);    
 end
 
 fclose(PLXid);

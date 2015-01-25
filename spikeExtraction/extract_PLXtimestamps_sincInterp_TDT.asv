@@ -156,7 +156,7 @@ numBlocks = ceil(datalength / blockSize);
 spikeParameterString = sprintf('WL%02d_PL%02d_DT%02d', waveLength, peakLoc, deadTime);
 PLX_fn = fullfile(processedDataPath, [sessionName '_' tetName '_' spikeParameterString '.plx']);
 
-plxInfo.comment    = '';
+plxInfo.comment    = 'This is a test';
 plxInfo.ADFs       = final_Fs;           % record the upsampled Fs as the AD freq for timestamps
 plxInfo.numWires   = length(chList);
 plxInfo.numEvents  = 0;
@@ -175,8 +175,8 @@ plxInfo.second     = 0;
 plxInfo.waveFs     = final_Fs;          % record the upsampled Fs as the waveform sampling frequency
 plxInfo.dataLength = datalength * r_upsample;
 
-plxInfo.Trodalness     = length(chList); 
-plxInfo.dataTrodalness = 0; 
+plxInfo.Trodalness     = length(chList); %Trodalness - 0,1 = single electrode, 2 = stereotrode, 4 = tetrode
+plxInfo.dataTrodalness = 1; %this is set to 0 in the Plexon tetrode sample file
 
 plxInfo.bitsPerSpikeSample = 16;
 plxInfo.bitsPerSlowSample  = 16;
@@ -185,7 +185,7 @@ plxInfo.SpikeMaxMagnitudeMV = 5000;%2;    % +/- 1 V dynamic range on DAQ cards
 plxInfo.SlowMaxMagnitudeMV  = 5000;%2;    % +/- 1 V dynamic range on DAQ cards (probably not relevant for Berke lab systems)
 
 %THIS SHOWS AS 65536 in OFFLINE SORTER, whats's wrong?
-plxInfo.SpikePreAmpGain     = 1000;%10^6;        % gain before final amplification stage
+plxInfo.SpikePreAmpGain     = 1;%10^6;        % gain before final amplification stage
 
 PLXid = fopen(PLX_fn, 'w');
 writePLXheader( PLXid, plxInfo );
@@ -208,7 +208,7 @@ for iCh = 1 : length(chList)
     chInfo.thresh    = int32(thresholds(iCh));
     chInfo.numUnits  = 0;    % no sorted units
     chInfo.sortWidth = final_waveLength;
-    chInfo.comment   = '';
+    chInfo.comment   = 'created by extractSpikesTDT.m';
 
     writePLXChanHeader( PLXid, chInfo );
 end
@@ -302,7 +302,7 @@ for iBlock = 1%:numBlocks
     
     ts = ts + upsampled_curSamp;
     
-    writePLXdatablock( PLXid, waveforms, ts, final_Fs);    
+    writePLXdatablock( PLXid, waveforms, ts);    
 end
 
 fclose(PLXid);
