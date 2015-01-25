@@ -1,4 +1,4 @@
-function rawData = readHSD( fn, numWires, dataOffset, Fs, timeLimits, varargin )
+function rawData = readHSD( fn, numWires, dataOffset, Fs, varargin )
 % function to read in raw data from an hsd/hsdw file given the filename,
 % number of channels, data offset, sampling rate, and timelimits
 %
@@ -32,7 +32,7 @@ bitOrder = 'b';
 
 startSample = 0;
 numSamples  = 0;
-for iarg = 1 : 2 : nargin - 5
+for iarg = 1 : 2 : nargin - 4
     switch lower(varargin{iarg})
         case 'datatype',
             dataType = varargin{iarg + 1};

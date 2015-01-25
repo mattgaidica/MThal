@@ -2,6 +2,8 @@ function y_snle = snle( y, goodWires, varargin )
 %
 % usage: y_snle = snle( y, varargin )
 %
+% function to calculate the smoothed nonlinear energy of signal y
+%
 % INPUTS:
 %   y - input data, m x n where m is the number of wires and n is the
 %       number of points

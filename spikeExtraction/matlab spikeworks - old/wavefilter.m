@@ -1,22 +1,30 @@
 % Matlab code for wavelet filtering.
 % This function requires the Wavelet Toolbox.
 
-function fdata = wavefilter(data, goodWires, maxlevel)
+function fdata = wavefilter(data, maxlevel, varargin)
 %
-% usage: fdata = wavefilter(data, maxlevel)
+% usage: fdata = wavefilter(data, maxlevel, varargin)
 %
 % INPUTS:
 %   data - an N x M array of continuously-recorded raw data
 %		where N is the number of channels, each containing M samples
-%   goodWires - vector containing "true" for each usable wire, and "false"
-%       for each bad wire, so unneccessary calculations aren't made
 %   maxlevel - the level of decomposition to perform on the data. This integer
 %		implicitly defines the cutoff frequency of the filter.
 % 		Specifically, cutoff frequency = samplingrate/(2^(maxlevel+1))
-%
-% OUTPUTS:
-%   fdata - wavelet filtered data in an N x M array, where N is the number
-%       of channels, and M is the number of samples
+% 
+% VARARGs:
+%   validMask - vector of booleans indicating whether a given channel has a
+%       clean signal. Set elements to zero to prevent wavelet filtering of
+%       "garbage" data, hopefully this will make things run faster
+
+validMask = ones(size(data,1), 1);
+
+for iarg = 1 : 2 : nargin - 2
+    switch lower(varargin{iarg})
+        case 'validmask',
+            validMask = varargin{iarg + 1};
+    end
+end
 
 [numwires, numpoints] = size(data);
 fdata = zeros(numwires, numpoints);
@@ -27,7 +35,7 @@ fdata = zeros(numwires, numpoints);
 wname = 'db4'; 
 
 for i=1:numwires % For each wire
-    if goodWires(i)
+    if validMask(i)
         % Decompose the data
         [c,l] = wavedec(data(i,:), maxlevel, wname);
         % Zero out the approximation coefficients

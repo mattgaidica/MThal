@@ -239,8 +239,7 @@ for iBlock = 1 : numBlocks
         numSamples = blockSize + 2 * overlapSize;
     end
     
-    rawData = readHSD(hsdFile, numWires, dataOffset, Fs, [], ...
-        'usesamplelimits', [startSample, numSamples]);
+    rawData = readHSD(hsdFile, numWires, dataOffset, Fs,'usesamplelimits', [startSample, numSamples]);
     
     rawData = rawData(wireList, :);
     if upsample
@@ -251,7 +250,7 @@ for iBlock = 1 : numBlocks
                 cutoff_Fs, final_Fs, 'sinclength', sincLength);
         end
         %fdata = wavefilter(interp_rawData, goodWires, maxLevel);
-        fdata = wavefilter(interp_rawData, takeAllWires, maxLevel); % changed by RS
+        fdata = wavefilter(interp_rawData,maxLevel); % changed by AZ
     else
         % wavelet filter the raw data
         % Don't bother to do the calculations for noisy wires.
@@ -265,9 +264,6 @@ for iBlock = 1 : numBlocks
     % preserve even noisy signals to see them in offline sorter (see fdata above!)
     
     SNLEdata = snle( fdata, goodWires, 'windowsize', 12 * r_upsample );   % 12 is Alex's default window size
-    %plot(SNLEdata)
-    %title('snledata')
-    
     % changed by RS to include upsampling rate
     
     % extract the timestamps of peaks in the smoothed non-linear energy
@@ -301,9 +297,6 @@ for iBlock = 1 : numBlocks
     if isempty(ts); continue; end
     
     waveforms = extractWaveforms(fdata, block_ts, final_peakLoc, final_waveLength);
-    %plot(waveforms)
-    %title('waveforms')
-    
     %   waveforms - m x n x p matrix, where m is the number of timestamps
     %   (spikes), n is the number of points in a single waveform, and p is
     %   the number of wires
@@ -402,6 +395,8 @@ switch chType
         typeString = 'T';
     case 2,     % ref (stereotrode)
         typeString = 'R';
+    case 3,     % Single wire % added by RS
+        typeString = 'W';        
 end
 
 ZZZ = sprintf('%c%02d', typeString, chNum);

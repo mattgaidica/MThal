@@ -7,7 +7,7 @@ function wiresPerChannel = getChannelWires(hsdHeader, chList, chType)
 %   chList - list of channels to extract (ie, tetrodes 1, 3, 4 or refs 2,
 %       3, etc.)
 %   chType - type of channel (are we looking for tetrodes or stereotrodes?)
-%       1 - tetrodes, 2 - stereotrodes/refs, 3 - single wires
+%       1 - tetrodes, 2 - stereotrodes/refs
 %
 % OUTPUTS:
 %   wiresPerChannel - m x n matrix; m = number of channels, n = number of

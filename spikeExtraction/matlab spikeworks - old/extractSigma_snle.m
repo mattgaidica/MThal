@@ -116,20 +116,14 @@ for iChunk = 1 : numSigmaSegments
         if goodWires(iWire)
             temp = readSingleWire_bySamples( hsdFile, wireList(iWire), ...
                 readStartSamp, chunkSize, 'datatype', dataType, 'machineformat', machineFormat);
-          %  disp(readStartSamp)
-          %  subplot(4,1,iWire)
-          %  plot(temp)
-          %  title(num2str(readStartSamp))
+            %disp(readStartSamp)
+            %subplot(4,1,iWire)
+            %plot(temp)
+            %title(num2str(readStartSamp))
             cutoff_Fs = hsdHeader.channel(wireList(iWire)).high_cut;
             temp = sincInterp(temp, Fs, cutoff_Fs, final_Fs, 'sinclength', sincLength);
-          % subplot(4,1,iWire)
-          % plot(temp)
             temp = wavefilter(temp', maxLevel);
-          %  subplot(4,1,iWire)
-          %  plot(temp)
             SNLEdata = snle( temp, true, 'windowsize', windowSize );
-          %  subplot(4,1,iWire)
-          %  plot(SNLEdata)
             wireSamps(wireSampIdx : wireSampIdx + chunkSize * r_upsample - 1, iWire) = SNLEdata;
         end
     end

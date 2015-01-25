@@ -18,25 +18,23 @@ function writePLXChanHeader( fid, chInfo )
 % make sure the wire name is exactly 32 characters long
 if length(chInfo.wireName) > 32
     chInfo.wireName = chInfo.wireName(1:32);
-    nameToWrite = uint8(chInfo.wireName);
 else
     numBlanks = 32 - length(chInfo.wireName);
 %     chInfo.wireName = [chInfo.wireName, blanks(numBlanks)];
-    nameToWrite = [uint8(chInfo.wireName), zeros(1, numBlanks)];
+    chInfo.wireName = [chInfo.wireName, zeros(1, numBlanks)];
+    nat
 end
 % fwrite(fid, chInfo.wireName, 'char*1', 0, 'l');
-fwrite(fid, nameToWrite, 'uint8', 0, 'l');
+fwrite(fid, chInfo.wireName, 'uint8', 0, 'l');
 
 % make sure the tetrode name is exactly 32 characters long
 if length(chInfo.tetName) > 32
     chInfo.tetName = chInfo.tetName(1:32);
-    tetToWrite = uint8(chInfo.tetName);
 else
     numBlanks = 32 - length(chInfo.tetName);
-%     chInfo.tetName = [chInfo.tetName, blanks(numBlanks)];
-    tetToWrite = [uint8(chInfo.tetName), zeros(1, numBlanks)];
+    chInfo.tetName = [chInfo.tetName, blanks(numBlanks)];
 end
-fwrite(fid, tetToWrite, 'uint8', 0, 'l');
+fwrite(fid, chInfo.tetName, 'char*1', 0, 'l');
 
 fwrite(fid, chInfo.wireNum, 'int32', 0, 'l');
 fwrite(fid, chInfo.WFRate, 'int32', 0, 'l');    % not exactly sure what this is; Alex had it set to zero
@@ -56,11 +54,9 @@ fwrite(fid, 0, 'int32', 0, 'l');		% Pad the int SortBeg spot (beginning of the s
 % make sure the comment is exactly 128 characters long
 if length(chInfo.comment) > 128
     chInfo.comment = chInfo.comment(1:128);
-    commentToWrite = uint8(chInfo.comment);
 else
     numBlanks = 128 - length(chInfo.comment);
-%     chInfo.comment = [chInfo.comment, blanks(numBlanks)];
-    commentToWrite = [uint8(chInfo.comment), zeros(1, numBlanks)];
+    chInfo.comment = [chInfo.comment, blanks(numBlanks)];
 end
-fwrite(fid, commentToWrite, 'uint8', 0, 'l');	% comment we're not typically using
+fwrite(fid, chInfo.comment, 'char', 0, 'l');	% comment we're not typically using
 fwrite(fid, zeros(1, 11), 'int32', 0, 'l');	% padding to finish it off (what the heck does this mean?)

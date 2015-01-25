@@ -1,14 +1,10 @@
-function y_snle = snle( y, goodWires, varargin )
+function y_snle = snle( y, varargin )
 %
-% usage: y_snle = snle( y, varargin )
+% usage:
 %
 % INPUTS:
 %   y - input data, m x n where m is the number of wires and n is the
 %       number of points
-%   goodWires - which wires have good data for which it is worth
-%       calculating the smoothed non-linear energy. This is a vector with a
-%       true value for each good wire, and a false/zero value for each bad
-%       wire
 %
 % varargs:
 %   windowsize - length of the windowing function, in samples; default = 12
@@ -24,7 +20,7 @@ function y_snle = snle( y, goodWires, varargin )
 windowSize = 13;
 windowFunct = 'hanning';
 
-for iarg = 1 : 2 : nargin - 2
+for iarg = 1 : 2 : nargin - 1
     
     switch lower(varargin{iarg})
         case 'windowsize',
@@ -51,13 +47,12 @@ switch lower(windowFunct)
         w = hann(windowSize);
 end
 
+    
 y_snle = y;
 
 y_snle(:, 2 : end-1) = y(:, 2 : end-1).^2 - y(:, 1 : end-2) .* y(:, 3 : end);
 
 for iRow = 1 : size(y, 1)
-    if goodWires(iRow)
-        temp = conv(y_snle(iRow, :), w);
-        y_snle(iRow, :) = temp(phaseShift : phaseShift + numSamps - 1);
-    end
+    temp = conv(y_snle(iRow, :), w);
+    y_snle(iRow, :) = temp(phaseShift : phaseShift + numSamps - 1);
 end

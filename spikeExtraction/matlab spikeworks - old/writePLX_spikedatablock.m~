@@ -1,4 +1,4 @@
-function writePLXdatablock( fid, spikes, ts )
+function writePLX_spikedatablock( fid, spikes, ts )
 %
 % usage: writePLXdatablock( fid, spikes, ts )
 %
@@ -19,15 +19,15 @@ function writePLXdatablock( fid, spikes, ts )
 % slices of byte-bread to sandwich the time-stamp that stay constant
 
 numSpikes = size(spikes, 1);
-numWires  = size(spikes, 3);    % check that the dimensions are correct for my data structures
+numWires  = size(spikes, 2);    % check that the dimensions are correct for my data structures
 for iSpike = 1 : numSpikes
     for iWire = 1 : numWires
    
-        fwrite(fid, 1,'int16', 0, 'l');    % not sure why these constants are written, but it worked in Alex's python code
-        fwrite(fid, 0,'int16', 0, 'l');
-        fwrite(fid, ts(iSpike),'uint32', 0, 'l');    % write the timestamp
+        fwrite(fid, 1,'int8', 0, 'l');    % data type - 1 for spikes, 4 for events, 5 for continuous
+        fwrite(fid, 0,'int8', 0, 'l');    % first 8 bits of 40-bit Plexon timestamp; 32 bits at 62.5 kHz still allows 19+ hours, so we don't need this
+        fwrite(fid, ts(iSpike),'uint32', 0, 'l');    % last 32 bits of the timestamp
         fwrite(fid, iWire, 'int16', 0, 'l');
-        fwrite(fid, [0 1 size(spikes, 2)], 'int16', 0, 'l');
+        fwrite(fid, [0 1 size(spikes, 1)], 'int16', 0, 'l');
         fwrite(fid, squeeze(spikes(iSpike, :, iWire)), 'int16', 0, 'l');
         
     end

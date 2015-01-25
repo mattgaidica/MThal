@@ -34,9 +34,10 @@ function extractSpikes( hsdFile, varargin )
 validTets        = [];
 validRefs        = [];
 validWires       = [];
-startTime        = 0;
-endTime          = getHSDlength('filename', hsdFile);
-rel_threshold    = 4.5;   % in units of standard deviation (or median!)
+%startTime        = 0; % commented out by RS because they are not used but
+%make it crash (thats the beauty of it!)
+%endTime          = getHSDlength('filename', hsdFile);
+rel_threshold    = 5;   % in units of standard deviation (or median!)
 numSigmaSegments = 60;  % number of segments to use to calculate the standard deviation of the signal on each wire
 sigmaChunkLength = 1;   % duration in seconds of data chunks to use to extract the standard deviations of the wavelet-filtered signals
 dataType         = 'int16';
@@ -161,7 +162,7 @@ wiresperref = getChannelWires(hsdHeader, validRefs, 2);
 % loop through all tetrodes, refs, and single wires. Get standard deviations for the signals on
 % each wire
 tetWireStd = zeros(numTets, 4);
-for iTet = 1 : numTets
+for iTet = 1 : 1
     disp(['calculating single wire standard deviations for tetrode ' num2str(validTets(iTet))]);
     tetWireStd(iTet, :) = extractSigma_snle(hsdFile, wirespertet(iTet, :), ...
         numSigmaSegments, sigmaChunkLength, r_upsample, 'datatype', dataType, ...
@@ -169,7 +170,7 @@ for iTet = 1 : numTets
         'maxlevel', maxLevel, 'maxsnle', maxSNLE);
 end
 refWireStd = zeros(numRefs, 2);
-for iRef = 1 : numRefs
+for iRef = 1 : 1
     disp(['calculating single wire standard deviations for ref ' num2str(validRefs(iRef))]);
     refWireStd(iRef, :) = extractSigma_snle(hsdFile, wiresperref(iRef, :), ...
         numSigmaSegments, sigmaChunkLength, r_upsample, 'datatype', dataType, ...
@@ -193,7 +194,7 @@ wire_thresholds = rel_threshold * singleWireStd;
 % signal on each relevant wire - now time to do the thresholding!
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-for iTet = 1 : numTets
+for iTet = 1 : 1
     extract_PLXtimestamps_sincInterp( hsdFile, processedSessionPath, wirespertet(iTet, :), tet_thresholds(iTet, :), ...
                                       'datatype', dataType, ...
                                       'wavelength', waveLength, ...

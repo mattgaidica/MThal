@@ -14,9 +14,12 @@ else
     plxInfo.comment = [plxInfo.comment, blanks(numBlanks)];
 end
 
+pad256(1:256) = uint8(0);
+
 fwrite(fid, 1480936528, 'int32', 0, 'l');         % magic number at start of .plx file; this is what was in Alex's .plx files
 fwrite(fid, 105, 'int32', 0, 'l');                % version number
-fwrite(fid, plxInfo.comment, 'char', 0, 'l');     % comment
+fwrite(fid, pad256(1:128), 'char', 0, 'l');     % comment
+%fwrite(fid, plxInfo.comment, 'char', 0, 'l');     % comment
 fwrite(fid, plxInfo.ADFs, 'int32', 0, 'l');       % sampling rate of AD converter; used to get timestamps(seconds) = timestamps(clock ticks) / ADFs
 fwrite(fid, plxInfo.numWires, 'int32', 0, 'l');   % number of wires (1, 2, or 4 for single wires, stereotrodes, or tetrodes respectively)
 fwrite(fid, plxInfo.numEvents, 'int32', 0, 'l');  % number of event channels
@@ -35,7 +38,7 @@ fwrite(fid, 0, 'int32', 0, 'l');                  % fast read (not sure what thi
 fwrite(fid, plxInfo.waveFs, 'int32', 0, 'l');     % sampling rate of the waveform (may be different from ADFs)
 fwrite(fid, plxInfo.dataLength, 'double', 0, 'l'); % last timestamp in clock ticks. Length in seconds = dataLength / ADFs
 
-% fwrite(fid, plxInfo.next4fields, 'char*1', 0, 'l');
+%fwrite(fid, plxInfo.next4fields, 'char*1', 0, 'l');
 fwrite(fid, plxInfo.Trodalness, 'uint8', 0, 'l'); % 1 for single wires, 2 for stereotrodes, 4 for tetrodes
 fwrite(fid, plxInfo.dataTrodalness, 'uint8', 0, 'l'); % not exactly sure how this differs from Trodalness above
 fwrite(fid, plxInfo.bitsPerSpikeSample, 'uint8', 0, 'l');  % ADC resolution for spike waveforms in bits

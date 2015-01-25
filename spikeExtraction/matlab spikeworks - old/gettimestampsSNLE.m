@@ -29,8 +29,6 @@ for iarg = 1 : 2 : nargin - 3
     
 end
 
-%threshold = threshold/2.5;
-
 % do the thresholding
 ts = [];
 for iWire = 1 : size(SNLEdata, 1);
