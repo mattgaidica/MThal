@@ -1,4 +1,4 @@
-function extractSpikesTDT(sessionName, varargin)
+function extractSpikesTDT_MG(sessionName, varargin)
 %
 % usage: extractSpikesTDT_20141205( sessionName, varargin )
 %
@@ -33,14 +33,14 @@ function extractSpikesTDT(sessionName, varargin)
 
 
 %%%%%%%%%%%%%%channel map is pulled out from a database channelMap table.%%%%%%%%%%%%%%
-javaaddpath('C:\Program Files\MATLAB\R2014b\java\jarext\mysql-connector-java-5.1.34\mysql-connector-java-5.1.34-bin.jar')
-% hostIP = '172.20.138.142';
-% user = 'dleventh';
-% password = 'amygdala_probe';
-% dbName = 'spikedb';
+javaaddpath('C:\Program Files\MATLAB\R2013a\java\jarext\mysql-connector-java-5.0.8\mysql-connector-java-5.0.8-bin.jar')
+hostIP = '172.20.138.142';
+user = 'dleventh';
+password = 'amygdala_probe';
+dbName = 'spikedb';
 
 tetrodeList      = {};
-rel_threshold    = 5;   % in units of standard deviation
+rel_threshold    = 9;   % in units of standard deviation
 numSigmaSegments = 60;  % number of segments to use to calculate the standard deviation of the signal on each wire
 sigmaChunkLength = 1;   % duration in seconds of data chunks to use to extract the standard deviations of the wavelet-filtered signals
 snle_window      = 12;    % Alex's default
@@ -99,14 +99,16 @@ endTime          = 0;
              startTime = varargin{iarg + 1};            % added in to make it possible to set start and end times for processing (for example, in case there was a long period before recording was initiated after turning on the software).
          case 'endtime',                                % this functionality has not been added to the code yet, though. -DL 12/15/2014
              endTime = varargin{iarg + 1};
+         case 'snlewindow',
+             snle_window = varargin{iarg + 1};
      end
  end
 
 [~, ratID] = sql_getSubjectFromSession(sessionName, ...
-                                               'hostip', hostIP, ...
-                                               'user', user, ...
-                                               'password', password, ...
-                                               'dbname', dbName);
+                                       'hostip', hostIP, ...
+                                       'user', user, ...
+                                       'password', password, ...
+                                       'dbname', dbName);
 chMap = sql_getChannelMap(ratID, ...
                           'hostip', hostIP, ...
                           'user', user, ...
@@ -127,6 +129,16 @@ processedSessionPath = fullfile(nasPath, ratID, [ratID '-processed']);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% cd(sessionTDTpath);
+% dirs=dir('*.sev');
+% sevfile = dirs(2).name;
+% [sev, header] = read_tdt_sev(sevfile);
+% header.name = sevfile;
+% %BELOW ADDED BY VIBIN, not sure if it's correct%
+% if header.Fs == 0
+%     header.Fs = 24414.0625;
+% end
+% %end section added by Vibin
 
 if ~exist(processedSessionPath, 'dir')
     mkdir(processedSessionPath);            % defined above after nasPath extracted from the sql db
@@ -166,8 +178,8 @@ for iTet = 1 : numValidTets
     
     disp(['calculating single wire standard deviations for tetrode ' tetrodeList{iTet}]);
     
-    tetWireStd(iTet, :) = extractSigma_snle_TDT(sessionTDTpath, ...            % NOTE: As of 20141208, it's actually not the standard deviation, but the median of the snle / 0.6745 
-                          chMap.chMap(tetChannels(iTet), 2:end), ...
+    tetWireStd(iTet, :) = extractSigma_snle_TDT_MG(sessionTDTpath, ...            % NOTE: As of 20141208, it's actually not the standard deviation, but the median of the snle / 0.6745 
+                          tetChannels(iTet,2:end), ...
                           validMask, ...
                           numSigmaSegments, sigmaChunkLength, r_upsample, ...
                           'snlewindow', snle_window, ...
@@ -213,7 +225,11 @@ for iTet = 1 : length(tetrodeList)
 
 	validMask(isnan(validMask)) = 0;
     
-    extract_PLXtimestamps_sincInterp_TDT(sessionTDTpath, tetrodeList{iTet}, chMap.chMap(iTet, 2:end), tet_thresholds(iTet, :), validMask, ...
+    if ~any(validMask)
+        continue;
+    end    % no valid channels for this tetrode
+    
+    extract_PLXtimestamps_sincInterp_TDT_MG(sessionTDTpath, tetrodeList{iTet},tetChannels(iTet,2:end), tet_thresholds(iTet, :), validMask, ...
         'wavelength', waveLength, ...
         'peakloc', peakLoc, ...
         'snlewindow', snle_window, ...

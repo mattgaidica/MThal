@@ -1,4 +1,4 @@
-function extract_PLXtimestamps_sincInterp_TDT( rawdataPath, tetName, chList, thresholds, validMask, varargin )
+function extract_PLXtimestamps_sincInterp_TDT_MG( rawdataPath, tetName, chList, thresholds, validMask, varargin )
 %
 % usage: extract_PLXtimestamps_sincInterp_TDT_20141208( hsdFile, chList, thresholds, varargin )
 %
@@ -41,12 +41,6 @@ windowSize = 12 * r_upsample;
 % number of samples for the ORIGINAL signal. That is, if the signal is
 % upsampled by a factor of 2, the deadTime, etc. written to the .plx file
 % will be 2 * the deadTime supplied above (or as a varargin).
-
-% dataType = 'float32';
-
-%  WORKING HERE.......
-% NEED TO GET RID OF LEGACY VARARGS
-
 
 for iarg = 1 : 2 : nargin - 5
     switch lower(varargin{iarg})
@@ -121,7 +115,7 @@ for iCh = 1 : length(chList)
     end
 end
 if ~firstValidSev
-    error('extract_PLXtimestamps_sincInterp_TDT_20141208:noSevFilesForRequestedChannels',['Cannot fine sev files for current tetrode in ' sessionName]);
+    error('extract_PLXtimestamps_sincInterp_TDT_20141208:noSevFilesForRequestedChannels',['Cannot find sev files for current tetrode in ' sessionName]);
 end
 
 Fs         = header.Fs;
@@ -156,7 +150,7 @@ numBlocks = ceil(datalength / blockSize);
 spikeParameterString = sprintf('WL%02d_PL%02d_DT%02d', waveLength, peakLoc, deadTime);
 PLX_fn = fullfile(processedDataPath, [sessionName '_' tetName '_' spikeParameterString '.plx']);
 
-plxInfo.comment    = 'Leventhal Lab';
+plxInfo.comment    = 'This is a test';
 plxInfo.ADFs       = final_Fs;           % record the upsampled Fs as the AD freq for timestamps
 plxInfo.numWires   = length(chList);
 plxInfo.numEvents  = 0;
@@ -176,7 +170,7 @@ plxInfo.waveFs     = final_Fs;          % record the upsampled Fs as the wavefor
 plxInfo.dataLength = datalength * r_upsample;
 
 plxInfo.Trodalness     = length(chList); %Trodalness - 0,1 = single electrode, 2 = stereotrode, 4 = tetrode
-plxInfo.dataTrodalness = 1; %this is set to 0 in the Plexon tetrode sample file
+plxInfo.dataTrodalness = 0; %this is set to 0 in the Plexon tetrode sample file
 
 plxInfo.bitsPerSpikeSample = 16;
 plxInfo.bitsPerSlowSample  = 16;
@@ -203,7 +197,7 @@ for iCh = 1 : length(chList)
     chInfo.WFRate    = final_Fs;
     chInfo.SIG       = chList(iCh);  %channel number
     chInfo.refWire   = 0;     % not sure exactly what this is; Alex had it set to zero
-    chInfo.gain      = 1000;
+    chInfo.gain      = 300;
     chInfo.filter    = 0;    % not sure what this is; Alex had it set to zero
     chInfo.thresh    = int32(thresholds(iCh));
     chInfo.numUnits  = 0;    % no sorted units
@@ -222,7 +216,10 @@ count3=0;
 %             MakeQTMovie('quality', 0.1);
 for iBlock = 1:numBlocks
     count3=count3+1;
-    disp(iBlock)
+    disp(sprintf('Extracting waveforms for %s, block %d of %d', ...
+                 tetName, ...
+                 iBlock, ...
+                 numBlocks))
     %disp(['Finding timestamps and extracting waveforms for block ' num2str(iBlock) ' of ' num2str(numBlocks)]);
     
     rawData_curSamp   = (iBlock - 1) * blockSize;
