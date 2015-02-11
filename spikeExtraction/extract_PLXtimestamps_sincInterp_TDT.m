@@ -1,4 +1,4 @@
-function extract_PLXtimestamps_sincInterp_TDT_MG( rawdataPath, tetName, chList, thresholds, validMask, varargin )
+function extract_PLXtimestamps_sincInterp_TDT( rawdataPath, tetName, chList, thresholds, validMask, varargin )
 %
 % usage: extract_PLXtimestamps_sincInterp_TDT_20141208( hsdFile, chList, thresholds, varargin )
 %

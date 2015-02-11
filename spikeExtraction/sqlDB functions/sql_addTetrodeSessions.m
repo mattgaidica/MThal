@@ -20,7 +20,9 @@ function sql_addTetrodeSessions(ratID, varargin)
 % OUTPUTS:
 %   none
 
-sqlJava_version = '5.0.8';
+% sqlJava_version = '5.0.8';
+sqlJava_version = '';
+
 hostIP = '172.20.138.142';
 user = 'dleventh';
 password = 'amygdala_probe';
@@ -55,12 +57,33 @@ elseif isunix
     
 end
 
-sql_java_path = fullfile(matlabParentDir, ...
-                         'java', ...
-                         'jarext', ...
-                         ['mysql-connector-java-' sqlJava_version], ...
-                         ['mysql-connector-java-' sqlJava_version '-bin.jar']);
-if ~strcmp(sql_java_path, javaclasspath)
+sql_java_main_path = fullfile(matlabParentDir, ...
+                              'java', ...
+                              'jarext');
+if isempty(sqlJava_version)
+    cd(sql_java_main_path);
+    java_connector_folder = dir('mysql-connector-java-*');
+
+    if length(java_connector_folder) > 1
+        java_connector_folder = java_connector_folder(1);
+    end
+
+    sql_java_path = fullfile(matlabParentDir, ...
+                             'java', ...
+                             'jarext', ...
+                             java_connector_folder.name, ...
+                             [java_connector_folder.name '-bin.jar']);
+else             
+    sql_java_path = fullfile(matlabParentDir, ...
+                             'java', ...
+                             'jarext', ...
+                             ['mysql-connector-java-' sqlJava_version], ...
+                             ['mysql-connector-java-' sqlJava_version '-bin.jar']);
+end
+
+if isempty(strcmp(sql_java_path, javaclasspath))
+    javaaddpath(sql_java_path);
+elseif ~strcmp(sql_java_path, javaclasspath)
     javaaddpath(sql_java_path);
 end
                           
@@ -95,7 +118,7 @@ if isconnection(conn)
     
     % find all the sessions already entered in the sql database for that
     % rat that have ephys recordings
-    qry = sprintf('SELECT sessionID FROM session WHERE session.subjectID = "%d" AND ephys_session = "1"',subjectID);
+    qry = sprintf('SELECT sessionID FROM session WHERE session.subjectID = "%d" AND ephysSystemID > "0"',subjectID);
     rs = fetch(exec(conn, qry));
     if strcmpi(rs.Data{1}, 'no data')
         error('sql_addTetrodeSessions:noValidSessions',['No sessions for ' ratID ' found in session table']);

@@ -1,4 +1,4 @@
-function chSigma = extractSigma_snle_TDT_MG(rawdataPath, chList, validMask, numSigmaSegments, t_chunk, r_upsample, varargin)
+function chSigma = extractSigma_snle_TDT(rawdataPath, chList, validMask, numSigmaSegments, t_chunk, r_upsample, varargin)
 %
 % usage: chSigma = extractSigma_snle(rawdataPath, chList, numSigmaSegments,
 %   chunkSize)

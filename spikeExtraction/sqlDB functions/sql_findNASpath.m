@@ -18,7 +18,8 @@ function nasPath = sql_findNASpath(ratID, varargin)
 % OUTPUT:
 %   nasPath - string containing the path to the data directory for ratID
            
-sqlJava_version = '5.0.8';
+% sqlJava_version = '5.0.8';
+sqlJava_version = '';
 
 hostIP = '172.20.138.142';
 user = 'dleventh';
@@ -54,15 +55,35 @@ elseif isunix
     
 end
 
-sql_java_path = fullfile(matlabParentDir, ...
-                         'java', ...
-                         'jarext', ...
-                         ['mysql-connector-java-' sqlJava_version], ...
-                         ['mysql-connector-java-' sqlJava_version '-bin.jar']);
-if isempty(strcmp(sql_java_path, javaclasspath))
+sql_java_main_path = fullfile(matlabParentDir, ...
+                              'java', ...
+                              'jarext');
+if isempty(sqlJava_version)
+    cd(sql_java_main_path);
+    java_connector_folder = dir('mysql-connector-java-*');
+
+    if length(java_connector_folder) > 1
+        java_connector_folder = java_connector_folder(1);
+    end
+
+    sql_java_path = fullfile(matlabParentDir, ...
+                             'java', ...
+                             'jarext', ...
+                             java_connector_folder.name, ...
+                             [java_connector_folder.name '-bin.jar']);
+else             
+    sql_java_path = fullfile(matlabParentDir, ...
+                             'java', ...
+                             'jarext', ...
+                             ['mysql-connector-java-' sqlJava_version], ...
+                             ['mysql-connector-java-' sqlJava_version '-bin.jar']);
+end
+
+if ~any(strcmp(javaclasspath('-static'),sql_java_path)) && ...
+   ~any(strcmp(javaclasspath('-dynamic'),sql_java_path))
     javaaddpath(sql_java_path);
-elseif ~strcmp(sql_java_path, javaclasspath)
-    javaaddpath(sql_java_path);
+% elseif ~strcmp(sql_java_path, javaclasspath)
+%     javaaddpath(sql_java_path);
 end
 
 jdbcString = sprintf('jdbc:mysql://%s/%s', hostIP, dbName);
