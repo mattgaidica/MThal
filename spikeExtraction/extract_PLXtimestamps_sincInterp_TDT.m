@@ -156,7 +156,7 @@ numBlocks = ceil(datalength / blockSize);
 spikeParameterString = sprintf('WL%02d_PL%02d_DT%02d', waveLength, peakLoc, deadTime);
 PLX_fn = fullfile(processedDataPath, [sessionName '_' tetName '_' spikeParameterString '.plx']);
 
-plxInfo.comment    = 'This is a test';
+plxInfo.comment    = 'Leventhal Lab';
 plxInfo.ADFs       = final_Fs;           % record the upsampled Fs as the AD freq for timestamps
 plxInfo.numWires   = length(chList);
 plxInfo.numEvents  = 0;
@@ -203,7 +203,7 @@ for iCh = 1 : length(chList)
     chInfo.WFRate    = final_Fs;
     chInfo.SIG       = chList(iCh);  %channel number
     chInfo.refWire   = 0;     % not sure exactly what this is; Alex had it set to zero
-    chInfo.gain      = 0;
+    chInfo.gain      = 1000;
     chInfo.filter    = 0;    % not sure what this is; Alex had it set to zero
     chInfo.thresh    = int32(thresholds(iCh));
     chInfo.numUnits  = 0;    % no sorted units

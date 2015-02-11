@@ -33,7 +33,7 @@ function extractSpikesTDT(sessionName, varargin)
 
 
 %%%%%%%%%%%%%%channel map is pulled out from a database channelMap table.%%%%%%%%%%%%%%
-javaaddpath('C:\Program Files\MATLAB\R2013a\java\jarext\mysql-connector-java-5.0.8\mysql-connector-java-5.0.8-bin.jar')
+javaaddpath('C:\Program Files\MATLAB\R2014b\java\jarext\mysql-connector-java-5.1.34\mysql-connector-java-5.1.34-bin.jar')
 % hostIP = '172.20.138.142';
 % user = 'dleventh';
 % password = 'amygdala_probe';
@@ -127,16 +127,6 @@ processedSessionPath = fullfile(nasPath, ratID, [ratID '-processed']);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% cd(sessionTDTpath);
-% dirs=dir('*.sev');
-% sevfile = dirs(2).name;
-% [sev, header] = read_tdt_sev(sevfile);
-% header.name = sevfile;
-% %BELOW ADDED BY VIBIN, not sure if it's correct%
-% if header.Fs == 0
-%     header.Fs = 24414.0625;
-% end
-% %end section added by Vibin
 
 if ~exist(processedSessionPath, 'dir')
     mkdir(processedSessionPath);            % defined above after nasPath extracted from the sql db
