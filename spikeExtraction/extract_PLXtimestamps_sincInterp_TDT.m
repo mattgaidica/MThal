@@ -150,7 +150,7 @@ numBlocks = ceil(datalength / blockSize);
 spikeParameterString = sprintf('WL%02d_PL%02d_DT%02d', waveLength, peakLoc, deadTime);
 PLX_fn = fullfile(processedDataPath, [sessionName '_' tetName '_' spikeParameterString '.plx']);
 
-plxInfo.comment    = 'This is a test';
+plxInfo.comment    = '';
 plxInfo.ADFs       = final_Fs;           % record the upsampled Fs as the AD freq for timestamps
 plxInfo.numWires   = length(chList);
 plxInfo.numEvents  = 0;
@@ -170,16 +170,16 @@ plxInfo.waveFs     = final_Fs;          % record the upsampled Fs as the wavefor
 plxInfo.dataLength = datalength * r_upsample;
 
 plxInfo.Trodalness     = length(chList); %Trodalness - 0,1 = single electrode, 2 = stereotrode, 4 = tetrode
-plxInfo.dataTrodalness = 0; %this is set to 0 in the Plexon tetrode sample file
+plxInfo.dataTrodalness = 1; %this is set to 0 in the Plexon tetrode sample file
 
 plxInfo.bitsPerSpikeSample = 16;
 plxInfo.bitsPerSlowSample  = 16;
 
-plxInfo.SpikeMaxMagnitudeMV = 10000;%2;    % +/- 1 V dynamic range on DAQ cards
-plxInfo.SlowMaxMagnitudeMV  = 10000;%2;    % +/- 1 V dynamic range on DAQ cards (probably not relevant for Berke lab systems)
+plxInfo.SpikeMaxMagnitudeMV = 10000;    % +/- 1 V dynamic range on DAQ cards
+plxInfo.SlowMaxMagnitudeMV  = 10000;    % +/- 1 V dynamic range on DAQ cards (probably not relevant for Berke lab systems)
 
 %THIS SHOWS AS 65536 in OFFLINE SORTER, whats's wrong?
-plxInfo.SpikePreAmpGain     = 1;%10^6;        % gain before final amplification stage
+plxInfo.SpikePreAmpGain     = 1;     % gain before final amplification stage
 
 PLXid = fopen(PLX_fn, 'w');
 writePLXheader( PLXid, plxInfo );

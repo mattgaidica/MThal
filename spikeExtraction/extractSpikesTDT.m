@@ -40,7 +40,7 @@ password = 'amygdala_probe';
 dbName = 'spikedb';
 
 tetrodeList      = {};
-rel_threshold    = 9;   % in units of standard deviation
+rel_threshold    = 5;   % in units of standard deviation
 numSigmaSegments = 60;  % number of segments to use to calculate the standard deviation of the signal on each wire
 sigmaChunkLength = 1;   % duration in seconds of data chunks to use to extract the standard deviations of the wavelet-filtered signals
 snle_window      = 12;    % Alex's default

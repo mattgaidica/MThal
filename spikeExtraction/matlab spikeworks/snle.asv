@@ -52,9 +52,10 @@ switch lower(windowFunct)
 end
 
 y_snle = y;
-T = 5;
-L = length(y)-(2*T);
-y_snle(:,1+T:end-T) = y(:,1+T:end-T).^2 - y(:,1:L) .* y(:,(end-L+1):end);
+T=10;
+L=length(y(:,1+T:end-T));
+y_snle(:,1+T:end-T) = y(:,1+T:end-T).^2 - y(:,1:end-(T+1)-1) .* y(:,2+T+1:end);
+y_snle(:,1+T:end-T) = y(:,1+T:end-T).^2 - y(:,1:end-(T+1)) .* y(:,2+T:end);
 %y_snle(:, 2 : end-1) = y(:, 2 : end-1).^2 - y(:, 1 : end-2) .* y(:, 3 : end);
 
 for iRow = 1 : size(y, 1)
