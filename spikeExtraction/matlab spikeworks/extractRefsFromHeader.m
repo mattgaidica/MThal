@@ -1,1 +1,0 @@
-function refList = extractRefsFromHeader(hsdHeader)

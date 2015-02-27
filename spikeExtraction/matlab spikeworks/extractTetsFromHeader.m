@@ -1,1 +1,0 @@
-function tetList = extractTetsFromHeader(hsdHeader)
